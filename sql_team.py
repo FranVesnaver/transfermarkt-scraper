@@ -1,6 +1,7 @@
 import sys
 import json
 import random
+import os
 
 def validate_filename(filename):
     return filename.endswith('.json')
@@ -125,8 +126,11 @@ if __name__ == "__main__":
         club_sql = generate_club_sql(data["club"], club_id)
         players_sql, players_index = generate_players_sql(data["players"], club_id, players_index)
 
-        with open(f"insert_teams.sql", "a") as out:
+        sql_path = os.path.join("output", "insert_teams.sql")
+
+        with open(sql_path, "a", encoding="utf-8") as out:
             out.write("\n".join(club_sql + players_sql))
+            out.write("\n")
 
         print(f"Generated SQL file for {team_file}")
         print(players_index)

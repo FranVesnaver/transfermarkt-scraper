@@ -210,10 +210,12 @@ if __name__ == '__main__':
     team = team.replace("-", "_").upper()  # Normalize team name
     data = scrape_team(url, league_id)
 
-    os.makedirs(f"league{league_id}", exist_ok=True)
-    with open(f"{team}.json", "w", encoding="utf-8") as f:
+    output_dir = os.path.join("output", f"league{league_id}")
+    os.makedirs(output_dir, exist_ok=True)
+
+    json_path = os.path.join(output_dir, f"{team}.json")
+    with open(json_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-        os.system(f"mv {team}.json league{league_id}")
 
     
     print(f"✅ Saved {len(data['players'])} players from {data['club']['name']} into {team}.json")
