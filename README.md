@@ -44,7 +44,7 @@ pip install -r requirements.txt
 ```bash
 python3 scrape_league.py <league_url> <league_id> <clubs_index> <players_index>
 ```
-- `league_url`: URL of the league page on Transfermarkt (e.g. https://www.transfermarkt.com/premier-league/startseite/wettbewerb/GB1)
+- `league_url`: URL of the league page on Transfermarkt (e.g. https://www.transfermarkt.com/torneo-final/startseite/wettbewerb/ARGC)
 
 - `league_id`: Numeric ID (custom, used in JSON/SQL output).
 
