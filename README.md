@@ -91,7 +91,7 @@ This saves a <TEAM>.json file with:
 ```
 ---
 ## SQL Generator (Optional)
-The script sql_team.py converts JSON into SQL insert statements following a custom schema designed for a Football Manager–style game.
+The script sql_team.py converts JSON into SQL insert statements following a custom schema designed for [ChiquiLeague](https://github.com/FranVesnaver/chiquileague), a Football Manager–style game. It can be used to manually update the squads of the clubs featured in the game. 
 
 Usage:
 
@@ -99,8 +99,9 @@ Usage:
 python3 sql_team.py <team_file.json> <team_id> <players_index>
 ```
 It will append insert statements to insert_teams.sql.
+Follow instructions in the [ChiquiLeague repo](https://github.com/FranVesnaver/chiquileague) to integrate the new squads to the game. 
 
-⚠️ Note: This schema is specific to my own game project.
+Note: This schema is specific to my own game project.
 If you want to use the scraper for another purpose, you can ignore sql_team.py and work directly with the JSON output.
 
 ## Disclaimer
@@ -109,7 +110,3 @@ This project is for educational and personal use.
 Respect Transfermarkt’s Terms of Service.
 
 Avoid making excessive requests (use caching as implemented).
-
-## License
-MIT License – feel free to use, adapt, and extend the scraping scripts.
-The SQL generator is provided as an example integration with a custom game database.
