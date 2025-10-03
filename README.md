@@ -2,7 +2,7 @@
 
 This project contains a set of Python scripts to scrape data from [Transfermarkt](https://www.transfermarkt.com/) using **BeautifulSoup**.  
 It allows you to extract league, club, and player information into JSON files.  
-Additionally, it includes an **SQL generator** that adapts the scraped data to a custom database schema (originally designed for a Football Manager–style game).
+Additionally, it includes an **SQL generator** that adapts the scraped data to a custom database schema, serving to the functionality of manually update the squads of the football management game [ChiquiLeague](https://github.com/FranVesnaver/chiquileague).
 
 ---
 
@@ -18,11 +18,13 @@ Additionally, it includes an **SQL generator** that adapts the scraped data to a
 ## Project Structure
 ```
 .
-├── scrape_league.py    # Entry point: scrape an entire league
-├── scrape_team.py      # Scrape a single team and its players
-├── sql_team.py         # Convert scraped JSON into SQL inserts (custom schema)
-├── cache/              # Local cache of downloaded HTML pages
-└── league<ID>/         # JSON output directory per league
+├── scrape_league.py        # Entry point: scrape an entire league
+├── scrape_team.py          # Scrape a single team and its players
+├── sql_team.py             # Convert scraped JSON into SQL inserts (custom schema)
+├── cache/                  # Local cache of downloaded HTML pages
+└── output/                 # Output folder
+    ├── league<ID>/         # JSON output directory per league
+    └── insert_teams.sql    # SQL inserts for teams and players
 ```
 
 ---
