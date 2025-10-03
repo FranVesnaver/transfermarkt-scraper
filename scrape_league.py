@@ -5,6 +5,8 @@ import requests
 import random
 import hashlib
 import subprocess
+import re
+import uuid
 
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
@@ -46,17 +48,31 @@ def fetch_or_load_html(url):
             print("❌ Error downloading the page.")
             return None
 
+pattern = re.compile(r"^https://www\.transfermarkt\.(com|es)/[a-z0-9\-]+/startseite/wettbewerb/[A-Z0-9]+$")
 
 if __name__ == '__main__':
     args = sys.argv[1:]
-    if len(args) != 4:
-        print("Usage: python3 scrape_league.py <url> <league_id> <clubs_index> <players_index>")
+    if len(args) == 4:
+        generate_sql_file = True
+    elif len(args) == 1:
+        generate_sql_file = False
+    else:
+        print("Usage: ")
+        print("    Generate JSONs only:   python3 scrape_league.py <league_url>")
+        print("    Generate SQL too:      python3 scrape_league.py <league_url> <init_league_id> <init_clubs_index> <init_players_index>")
         sys.exit(1)
 
     league_url = args[0]
-    league_id = args[1]
-    clubs_index = int(args[2])
-    players_index = args[3]
+    if not pattern.match(league_url):
+        print("Invalid URL, it must be a league url from https://www.transfermarkt.com/")
+        sys.exit(1)
+
+    if generate_sql_file:
+        league_id = args[1]
+        clubs_index = int(args[2])
+        players_index = args[3]
+    else:
+        league_id = str(uuid.uuid4())[:8]
 
     league_name = format_league_name(league_url.split('/')[3])
 
@@ -79,16 +95,21 @@ if __name__ == '__main__':
         
         relative_url = a_tag.get("href")
         team_url = f"https://www.transfermarkt.es{relative_url}/plus/1"
-        
-        result = subprocess.run(["python3", "scrape_team.py", f"{team_url}", f"{league_id}", f"{clubs_index}", f"{players_index}"], capture_output=True, text=True)
-        print(result.stdout)
 
-        try:
-            players_index = int(result.stdout.strip().splitlines()[-1])
-        except Exception:
-            print("Couldn't read players index") 
-            
-        clubs_index += 1
-    print(players_index)
-    print(clubs_index)
+        if generate_sql_file:
+            result = subprocess.run(["python3", "scrape_team.py", f"{team_url}", f"{league_id}", f"{clubs_index}", f"{players_index}"], capture_output=True, text=True)
+            print(result.stdout)
+
+            try:
+                players_index = int(result.stdout.strip().splitlines()[-1])
+            except Exception:
+                print("Couldn't read players index") 
+                
+            clubs_index += 1
+        else:
+            subprocess.run(["python3", "scrape_team.py", f"{team_url}", f"{league_id}"])  # the last argument is a random id for the league
+    
+    if generate_sql_file:
+        print(players_index)
+        print(clubs_index)
     

@@ -75,7 +75,7 @@ def format_date(str):
         return f"{match.group(3)}-{match.group(2)}-{match.group(1)}"
     return str
 
-def scrape_team(url, league_id):
+def scrape_team(url, league_id=0):
     html = fetch_or_load_html(url)
     if not html:
         sys.exit(1)
@@ -195,20 +195,36 @@ def scrape_team(url, league_id):
         "players": players
     }
 
+pattern = re.compile(r"^https://www\.transfermarkt\.(com|es)/[a-z0-9\-]+/kader/verein/\d+/saison_id/\d{4}/plus/1$")
+
 if __name__ == '__main__':
     args = sys.argv[1:]
-    if len(args) != 4:
-        print("Usage: python3 scrape_team.py <url> <league_id> <team_id> <players_index>")
+    if len(args) == 4:
+        generate_sql_file = True
+    elif len(args) == 1 or len(args) == 2:       # if len(args) == 2 it means scrape_league run the script
+        generate_sql_file = False
+    else:
+        print("Usage: ")
+        print("    Generate JSONs only:   python3 scrape_team.py <url>")
+        print("    Generate SQL too:      python3 scrape_team.py <url> <league_id> <team_id> <players_index>")
         sys.exit(1)
     
     url = args[0]
+    if not pattern.match(url):
+        print("Invalid URL, it must be a club url from https://www.transfermarkt.com/")
+        sys.exit(1)
     league_id = args[1]
-    team_id = args[2]
-    players_index = args[3]
+
+    if generate_sql_file:
+        team_id = args[2]
+        players_index = args[3]
 
     team = url.split("/")[-8]  # Extract team name from URL
     team = team.replace("-", "_").upper()  # Normalize team name
-    data = scrape_team(url, league_id)
+    if generate_sql_file:
+        data = scrape_team(url, league_id)
+    else:
+        data = scrape_team(url)
 
     output_dir = os.path.join("output", f"league{league_id}")
     os.makedirs(output_dir, exist_ok=True)
@@ -219,12 +235,18 @@ if __name__ == '__main__':
 
     
     print(f"✅ Saved {len(data['players'])} players from {data['club']['name']} into {team}.json")
-    result = subprocess.run(["python3", "sql_team.py", f"league{league_id}/{team}.json", f"{team_id}", f"{players_index}"], capture_output=True, text=True)
-    print(result.stdout)
+    
+    if generate_sql_file:
+        result = subprocess.run(
+            ["python3", "sql_team.py", os.path.join("output", f"league{league_id}", f"{team}.json"), f"{team_id}", f"{players_index}"],
+            capture_output=True, text=True
+        )
+        print(result.stdout)
+        
 
-    try:
-        players_index = int(result.stdout.strip().splitlines()[-1])
-    except Exception:
-        print("Couldn't read players index")
+        try:
+            players_index = int(result.stdout.strip().splitlines()[-1])
+        except Exception:
+            print("Couldn't read players index")
 
-    print(players_index)
+        print(players_index)
