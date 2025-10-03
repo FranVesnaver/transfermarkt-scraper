@@ -11,7 +11,7 @@ Additionally, it includes an **SQL generator** that adapts the scraped data to a
   - Extracts all clubs in the league.
   - For each club, extracts stadium info and player roster.
 - Saves results into structured **JSON files**.
-- (Optional) Converts JSON into **SQL insert statements** for a specific database schema.
+- (Optional) Converts JSON into **SQL insert statements** for a [specific database schema](#sql-generator-optional).
 
 ---
 
