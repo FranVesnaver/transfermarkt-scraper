@@ -1,3 +1,4 @@
+import time
 import requests
 from bs4 import BeautifulSoup
 import json
@@ -51,14 +52,14 @@ def fetch_or_load_html(url):
             return f.read()
     else:
         print(f"🌐 Downloading: {url}")
-        response = requests.get(url, headers=HEADERS)
-        if response.status_code == 200:
-            with open(file_path, "w", encoding="utf-8") as f:
-                f.write(response.text)
-            return response.text
-        else:
-            print("❌ Error downloading the page.")
-            return None
+        while True:
+            wait_time = random.randint(3,10)
+            time.sleep(wait_time)
+            response = requests.get(url, headers=HEADERS)
+            if response.status_code == 200:
+                with open(file_path, "w", encoding="utf-8") as f:
+                    f.write(response.text)
+                return response.text
 
 def parse_height(height_str):
     match = re.match(r"^\d{1},\d{2}\s?m$", height_str)

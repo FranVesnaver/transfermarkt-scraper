@@ -1,5 +1,6 @@
 import sys
 import os
+import time
 from bs4 import BeautifulSoup
 import requests
 import random
@@ -39,14 +40,15 @@ def fetch_or_load_html(url):
             return f.read()
     else:
         print(f"🌐 Downloading: {url}")
-        response = requests.get(url, headers=HEADERS)
-        if response.status_code == 200:
-            with open(file_path, "w", encoding="utf-8") as f:
-                f.write(response.text)
-            return response.text
-        else:
-            print("❌ Error downloading the page.")
-            return None
+        while True:
+            # wait a random amount of seconds
+            wait_time = random.randint(3,15)
+            time.sleep(wait_time)
+            response = requests.get(url, headers=HEADERS)
+            if response.status_code == 200:
+                with open(file_path, "w", encoding="utf-8") as f:
+                    f.write(response.text)
+                return response.text
 
 pattern = re.compile(r"^https://www\.transfermarkt\.(com|es)/[a-z0-9\-]+/startseite/wettbewerb/[A-Z0-9]+$")
 
