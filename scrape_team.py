@@ -37,12 +37,12 @@ position_map = {
 }
 
 def url_to_filename(url):
-    # Crea un nombre de archivo único basado en la URL
+    # Creates a unique file name
     h = hashlib.md5(url.encode()).hexdigest()
     return f"cache/{h}.html"
 
 def fetch_or_load_html(url):
-    # Devuelve el HTML desde cache si existe, o lo descarga
+    # return the HTML from Cache if it exists, otherwise download it
     os.makedirs("cache", exist_ok=True)
     file_path = url_to_filename(url)
 
@@ -82,7 +82,7 @@ def scrape_team(url, league_id=0):
         sys.exit(1)
     soup = BeautifulSoup(html, 'html.parser')
 
-    # Extrae el nombre del equipo desde el header principal
+    # extract team name from header
     header = soup.find("header", class_="data-header")
     team_name = None
     if header:
@@ -94,21 +94,21 @@ def scrape_team(url, league_id=0):
     stadium_name = None
     capacity = None
 
-    # Busca el <li> que contiene "Estadio:"
+    # Search for a <li> containing "Estadio: "
     li_stadium = soup.find("li", string=lambda t: t and "Estadio:" in t)
     if not li_stadium:
-        # Si no lo encuentra por string, busca por clase y recorre los <li>
+        # if not found, search by class and go over the <li>
         for li in soup.select("li.data-header__label"):
             if "Estadio:" in li.get_text():
                 li_stadium = li
                 break
 
     if li_stadium:
-        # Nombre del estadio
+        # Stadium name
         a = li_stadium.find("a")
         if a:
             stadium_name = a.text.strip()
-        # Capacidad
+        # Capacity
         span = li_stadium.find("span", class_="tabellenplatz")
         if span:
             match = re.search(r"([\d\.]+)", span.text)
