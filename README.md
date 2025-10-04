@@ -40,7 +40,23 @@ pip install -r requirements.txt
 ```
 
 ## Usage
+You can run the scraper in two modes:
+1. JSON only – download data as JSON files.
+2. JSON + SQL – download JSON and also generate SQL inserts for a custom schema.
+
 ### Scraping a League
+#### JSON only
+```bash
+python3 scrape_league.py <league_url>
+```
+- `league_url`: URL of the league page on Transfermarkt (e.g. https://www.transfermarkt.com/torneo-final/startseite/wettbewerb/ARGC)
+
+This will:
+- Scrape all teams and players in the league.
+- Save JSON files into:
+
+---
+#### JSON + SQL
 ```bash
 python3 scrape_league.py <league_url> <league_id> <clubs_index> <players_index>
 ```
@@ -53,20 +69,16 @@ python3 scrape_league.py <league_url> <league_id> <clubs_index> <players_index>
 - `players_index`: Starting index for player IDs.
 
 This will:
-
-1. Download (or load from cache) the league page.
-
-2. Scrape all teams in the league.
-
-3. For each team, call `scrape_team.py`.
-
-4. Save JSON files under `league<league_id>/`.
+- Scrape all teams and players in the league.
+- Save JSON files into `output/league<league_id>/<TEAM>.json`.
+- Generate an SQL file with all insert statements: `output/insert_teams.sql`.
 
 ### Scraping a Team
+You could also run the script to an individual team
 ```bash
 python3 scrape_team.py <team_url> <league_id> <team_id> <players_index>
 ```
-This saves a <TEAM>.json file with:
+This saves a `<TEAM>.json` file with:
 
 ```json
 {
@@ -92,15 +104,15 @@ This saves a <TEAM>.json file with:
 }
 ```
 ---
-## SQL Generator (Optional)
-The script sql_team.py converts JSON into SQL insert statements following a custom schema designed for [ChiquiLeague](https://github.com/FranVesnaver/chiquileague), a Football Manager–style game. It can be used to manually update the squads of the clubs featured in the game. 
+## About the SQL Generator
+The script `sql_team.py` converts JSON into SQL insert statements following a custom schema designed for [ChiquiLeague](https://github.com/FranVesnaver/chiquileague), a Football Manager–style game. It can be used to manually update the squads of the clubs featured in the game. 
 
 Usage:
 
 ```bash
 python3 sql_team.py <team_file.json> <team_id> <players_index>
 ```
-It will append insert statements to insert_teams.sql.
+It will append insert statements to insert_teams.sql. It is recommended not to use this script individually, but to run `scrape_league.py` with the SQL option.
 Follow instructions in the [ChiquiLeague repo](https://github.com/FranVesnaver/chiquileague) to integrate the new squads to the game. 
 
 Note: This schema is specific to my own game project.
