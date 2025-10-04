@@ -74,7 +74,7 @@ if __name__ == '__main__':
         clubs_index = int(args[2])
         players_index = args[3]
     else:
-        league_id = str(uuid.uuid4())[:8]
+        league_id = str(uuid.uuid4())[:8]      # random id for storing
 
     league_name = format_league_name(league_url.split('/')[3])
 
@@ -98,8 +98,12 @@ if __name__ == '__main__':
         relative_url = a_tag.get("href")
         team_url = f"https://www.transfermarkt.es{relative_url}/plus/1"
 
+        # search script from absolute path
+        SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+        scrape_team_path = os.path.join(SCRIPT_DIR, "scrape_team.py")
+
         if generate_sql_file:
-            result = subprocess.run(["python3", "scrape_team.py", f"{team_url}", f"{league_id}", f"{clubs_index}", f"{players_index}"], capture_output=True, text=True)
+            result = subprocess.run(["python3", scrape_team_path, f"{team_url}", f"{league_id}", f"{clubs_index}", f"{players_index}"], capture_output=True, text=True)
             print(result.stdout)
 
             try:
@@ -109,7 +113,7 @@ if __name__ == '__main__':
                 
             clubs_index += 1
         else:
-            subprocess.run(["python3", "scrape_team.py", f"{team_url}", f"{league_id}"])  # the last argument is a random id for the league
+            subprocess.run(["python3", scrape_team_path, f"{team_url}", f"{league_id}"])  # the last argument is a random id for the league
     
     if generate_sql_file:
         print(players_index)

@@ -237,9 +237,13 @@ if __name__ == '__main__':
     
     print(f"✅ Saved {len(data['players'])} players from {data['club']['name']} into {team}.json")
     
+    # search script from absolute path
+    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+    sql_team_path = os.path.join(SCRIPT_DIR, "sql_team.py")
+
     if generate_sql_file:
         result = subprocess.run(
-            ["python3", "sql_team.py", os.path.join("output", f"league{league_id}", f"{team}.json"), f"{team_id}", f"{players_index}"],
+            ["python3", sql_team_path, os.path.join("output", f"league{league_id}", f"{team}.json"), f"{team_id}", f"{players_index}"],
             capture_output=True, text=True
         )
         print(result.stdout)
