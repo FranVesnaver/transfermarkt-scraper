@@ -16,8 +16,17 @@ USER_AGENTS = [
 ]
 
 HEADERS = {
-    'User-Agent': random.choice(USER_AGENTS)
+    'User-Agent': random.choice(USER_AGENTS),
+    "Accept-Language": "en-US,en;q=0.9",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Referer": "https://www.google.com/",
+    "DNT": "1",
+    "Upgrade-Insecure-Requests": "1",
 }
+
+session = requests.Session()
+session.headers.update(HEADERS)
+session.get("https://www.transfermarkt.com")
 
 position_map = {
     "Portero": "PO",
@@ -53,13 +62,15 @@ def fetch_or_load_html(url):
     else:
         print(f"🌐 Downloading: {url}")
         while True:
-            wait_time = random.randint(3,10)
+            wait_time = random.randint(10, 30)
             time.sleep(wait_time)
-            response = requests.get(url, headers=HEADERS)
+            response = session.get(url, timeout=15)
             if response.status_code == 200:
                 with open(file_path, "w", encoding="utf-8") as f:
                     f.write(response.text)
                 return response.text
+            else: 
+                print(f"failed, waiting {wait_time}")
 
 def parse_height(height_str):
     match = re.match(r"^\d{1},\d{2}\s?m$", height_str)
