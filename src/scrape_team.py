@@ -8,24 +8,22 @@ import hashlib
 import os
 import sys
 import subprocess
+from fake_useragent import UserAgent
 
-USER_AGENTS = [
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
-    "Mozilla/5.0 (X11; Linux x86_64)",
-]
+ua = UserAgent()
 
-HEADERS = {
-    'User-Agent': random.choice(USER_AGENTS),
-    "Accept-Language": "en-US,en;q=0.9",
-    "Accept-Encoding": "gzip, deflate, br",
-    "Referer": "https://www.google.com/",
-    "DNT": "1",
-    "Upgrade-Insecure-Requests": "1",
-}
+def get_headers():
+    return {
+        'User-Agent': ua.random,
+        "Accept-Language": "en-US,en;q=0.9",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Referer": "https://www.google.com/",
+        "DNT": "1",
+        "Upgrade-Insecure-Requests": "1",
+    }
 
 session = requests.Session()
-session.headers.update(HEADERS)
+session.headers.update(get_headers())
 session.get("https://www.transfermarkt.com")
 
 position_map = {
@@ -62,7 +60,7 @@ def fetch_or_load_html(url):
     else:
         print(f"🌐 Downloading: {url}")
         while True:
-            wait_time = random.randint(10, 30)
+            wait_time = random.randint(1, 10)
             time.sleep(wait_time)
             response = session.get(url, timeout=15)
             if response.status_code == 200:
@@ -266,3 +264,5 @@ if __name__ == '__main__':
             print("Couldn't read players index")
 
         print(players_index)
+
+    session.close()

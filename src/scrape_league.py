@@ -8,24 +8,22 @@ import hashlib
 import subprocess
 import re
 import uuid
+from fake_useragent import UserAgent
 
-USER_AGENTS = [
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
-    "Mozilla/5.0 (X11; Linux x86_64)",
-]
+ua = UserAgent()
 
-HEADERS = {
-    'User-Agent': random.choice(USER_AGENTS),
-    "Accept-Language": "en-US,en;q=0.9",
-    "Accept-Encoding": "gzip, deflate, br",
-    "Referer": "https://www.google.com/",
-    "DNT": "1",
-    "Upgrade-Insecure-Requests": "1",
-}
+def get_headers():
+    return {
+        'User-Agent': ua.random,
+        "Accept-Language": "en-US,en;q=0.9",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Referer": "https://www.google.com/",
+        "DNT": "1",
+        "Upgrade-Insecure-Requests": "1",
+    }
 
 session = requests.Session()
-session.headers.update(HEADERS)
+session.headers.update(get_headers())
 session.get("https://www.transfermarkt.com")
 
 def format_league_name(str):
