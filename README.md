@@ -34,6 +34,7 @@ Additionally, it includes an **SQL generator** that adapts the scraped data to a
 - Python 3.8+
 - [BeautifulSoup4](https://www.crummy.com/software/BeautifulSoup/)
 - [Requests](https://pypi.org/project/requests/)
+- [fake-useragent](https://pypi.org/project/fake-useragent/)
 
 Install dependencies:
 ```bash
